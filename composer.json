@@ -1,0 +1,24 @@
+{
+  "name": "tempo/resource-extra-bundle",
+  "description": "Extends SyliusResource.",
+  "keywords": [ "configuration"],
+  "type": "symfony-bundle",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Mlanawo Mbechezi",
+      "email": "mlanawo.mbechezi@ikimea.com"
+    }
+  ],
+  "require": {
+    "sylius/resource-bundle": "0.15"
+  },
+  "autoload": {
+    "psr-4": { "Tempo\\Bundle\\ResourceExtraBundle\\": "" }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "0.5-dev"
+    }
+  }
+}
