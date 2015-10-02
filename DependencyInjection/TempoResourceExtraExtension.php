@@ -44,7 +44,6 @@ class TempoResourceExtraExtension extends AbstractResourceExtension
      */
     public function load(array $config, ContainerBuilder $container)
     {
-
         $config = $this->configure(
             $config,
             new Configuration(),
@@ -55,10 +54,12 @@ class TempoResourceExtraExtension extends AbstractResourceExtension
         $this->createDomainManager($container);
         $this->createManagerServices($container,$config);
         $this->createAdminServices($container,$config);
+
+        return $config;
     }
 
 
-    private function createDomainManager($container)
+    protected function createDomainManager($container)
     {
         $class = 'Tempo\Bundle\ResourceExtraBundle\Manager\DomainManager';
         $container
@@ -68,7 +69,7 @@ class TempoResourceExtraExtension extends AbstractResourceExtension
             ->addArgument(new Reference('sylius.controller.parameters_parser'));
     }
 
-    private function createManagerServices(ContainerBuilder $container, $config)
+    protected function createManagerServices(ContainerBuilder $container, $config)
     {
         $classes = $container->getParameter('sylius.config.classes')['default'];
 
@@ -90,15 +91,15 @@ class TempoResourceExtraExtension extends AbstractResourceExtension
         }
     }
 
-    public function createAdminServices(ContainerBuilder $container, $config)
+    protected function createAdminServices(ContainerBuilder $container, $config)
     {
         foreach ($config['admin'] as $resourceName => $conf) {
             if (!isset($conf['controller'])) {
                 $conf['controller'] = $config['controller_admin'];
             }
-
+            
             $container->setDefinition(
-                sprintf('%s.admin.controller.%s' . $this->applicationName,$resourceName),
+                sprintf('%s.admin.controller.%s',$this->applicationName,$resourceName),
                 $this->getControllerDefinition($conf['controller'], $resourceName)
             );
         }
