@@ -51,6 +51,10 @@ class TempoResourceExtraExtension extends AbstractResourceExtension
             self::CONFIGURE_LOADER | self::CONFIGURE_DATABASE | self::CONFIGURE_PARAMETERS
         );
 
+        if (isset($config['app_name'])) {
+            $this->applicationName = $config['app_name'];
+        }
+
         $this->createDomainManager($container);
         $this->createManagerServices($container,$config);
         $this->createAdminServices($container,$config);
