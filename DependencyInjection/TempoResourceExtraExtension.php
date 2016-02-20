@@ -12,8 +12,10 @@
 namespace Tempo\Bundle\ResourceExtraBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Sylius\Bundle\ResourceBundle\DependencyInjection\Extension\AbstractResourceExtension;
 use Tempo\Bundle\ResourceExtraBundle\Util\ClassUtils;
 
@@ -44,12 +46,10 @@ class TempoResourceExtraExtension extends AbstractResourceExtension
      */
     public function load(array $config, ContainerBuilder $container)
     {
-        $config = $this->configure(
-            $config,
-            new Configuration(),
-            $container,
-            self::CONFIGURE_LOADER | self::CONFIGURE_DATABASE | self::CONFIGURE_PARAMETERS
-        );
+        $config = $this->processConfiguration(new Configuration(), $config);
+
+        $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $this->registerResources($this->applicationName, $config['driver'], array(), $container);
 
         if (isset($config['app_name'])) {
             $this->applicationName = $config['app_name'];
@@ -75,11 +75,10 @@ class TempoResourceExtraExtension extends AbstractResourceExtension
 
     protected function createManagerServices(ContainerBuilder $container, $config)
     {
-        $classes = $container->getParameter('sylius.config.classes')['default'];
+        $classes = $container->getParameter('sylius.resources');
 
         foreach ($classes as $class) {
-
-            $model = $class['model'];
+            $model = $class['classes']['model'];
             $className = ClassUtils::getShortName($model, false);
             $manager = sprintf($config['model_manager'], ucfirst($className));
 
@@ -101,7 +100,7 @@ class TempoResourceExtraExtension extends AbstractResourceExtension
             if (!isset($conf['controller'])) {
                 $conf['controller'] = $config['controller_admin'];
             }
-            
+
             $container->setDefinition(
                 sprintf('%s.admin.controller.%s',$this->applicationName,$resourceName),
                 $this->getControllerDefinition($conf['controller'], $resourceName)
