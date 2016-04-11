@@ -69,8 +69,7 @@ class TempoResourceExtraExtension extends AbstractResourceExtension
         $container
             ->register(sprintf('%s.domain_manager', $this->applicationName), $class)
             ->addArgument(new Reference('doctrine.orm.entity_manager'))
-            ->addArgument(new Reference('event_dispatcher'))
-            ->addArgument(new Reference('sylius.controller.parameters_parser'));
+            ->addArgument(new Reference('event_dispatcher'));
     }
 
     protected function createManagerServices(ContainerBuilder $container, $config)

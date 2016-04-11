@@ -36,19 +36,12 @@ class DomainManager
     protected $objectManager;
 
     /**
-     * @var Collection
-     */
-
-    protected $parameters;
-
-    /**
      * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(ObjectManager $objectManager, EventDispatcherInterface $eventDispatcher, $parameters)
+    public function __construct(ObjectManager $objectManager, EventDispatcherInterface $eventDispatcher)
     {
         $this->objectManager    = $objectManager;
         $this->eventDispatcher  = $eventDispatcher;
-        $this->parameters       = $parameters;
     }
 
     /**
