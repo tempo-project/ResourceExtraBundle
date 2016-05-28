@@ -11,6 +11,7 @@
 
 namespace Tempo\Bundle\ResourceExtraBundle\DependencyInjection;
 
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Reference;
@@ -18,6 +19,7 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Sylius\Bundle\ResourceBundle\DependencyInjection\Extension\AbstractResourceExtension;
 use Tempo\Bundle\ResourceExtraBundle\Util\ClassUtils;
+use Tempo\Bundle\ResourceExtraBundle\Manager\DomainManager;
 
 /**
  * This is the class that loads and manages your bundle configuration
@@ -57,21 +59,27 @@ class TempoResourceExtraExtension extends AbstractResourceExtension
 
         $this->createDomainManager($container);
         $this->createManagerServices($container,$config);
+        $this->createRepositoriesServices($container,$config);
         $this->createAdminServices($container,$config);
 
         return $config;
     }
 
-
-    protected function createDomainManager($container)
+    /**
+     * @param ContainerBuilder $container
+     */
+    protected function createDomainManager(ContainerBuilder $container)
     {
-        $class = 'Tempo\Bundle\ResourceExtraBundle\Manager\DomainManager';
         $container
-            ->register(sprintf('%s.domain_manager', $this->applicationName), $class)
+            ->register(sprintf('%s.domain_manager', $this->applicationName), DomainManager::class)
             ->addArgument(new Reference('doctrine.orm.entity_manager'))
             ->addArgument(new Reference('event_dispatcher'));
     }
 
+    /**
+     * @param ContainerBuilder $container
+     * @param $config
+     */
     protected function createManagerServices(ContainerBuilder $container, $config)
     {
         $classes = $container->getParameter('sylius.resources');
@@ -93,6 +101,10 @@ class TempoResourceExtraExtension extends AbstractResourceExtension
         }
     }
 
+    /**
+     * @param ContainerBuilder $container
+     * @param $config
+     */
     protected function createAdminServices(ContainerBuilder $container, $config)
     {
         foreach ($config['admin'] as $resourceName => $conf) {
@@ -107,29 +119,75 @@ class TempoResourceExtraExtension extends AbstractResourceExtension
         }
     }
 
+    /**
+     * @param $class
+     * @param $resourceName
+     * @return Definition
+     */
     protected function getControllerDefinition($class, $resourceName)
     {
         $definition = new Definition($class);
         $definition
-            ->setArguments(array($this->getConfigurationDefinition($resourceName)))
-            ->addMethodCall('setContainer', array(new Reference('service_container')))
-        ;
+            ->setArguments(array(
+                $this->getConfigurationDefinition($resourceName),
+                new Reference('sylius.resource_controller.request_configuration_factory'),
+                new Reference('sylius.resource_controller.view_handler'),
+                new Reference(sprintf('tempo.repository.%s', $resourceName)),
+                new Reference(sprintf('tempo.factory.%s', $resourceName)),
+                new Reference('sylius.resource_controller.new_resource_factory'),
+                new Reference('doctrine.orm.default_entity_manager'),
+                new Reference('sylius.resource_controller.single_resource_provider'),
+                new Reference('sylius.resource_controller.resources_collection_provider'),
+                new Reference('sylius.resource_controller.form_factory'),
+                new Reference('sylius.resource_controller.redirect_handler'),
+                new Reference('sylius.resource_controller.flash_helper'),
+                new Reference('sylius.resource_controller.authorization_checker.disabled'),
+                new Reference('sylius.resource_controller.event_dispatcher'),
+            ))
+            ->addMethodCall('setContainer', array(new Reference('service_container')));
 
         return $definition;
     }
 
+    /**
+     * @param $resourceName
+     * @return Definition
+     */
     protected function getConfigurationDefinition($resourceName)
     {
-        $definition = new Definition('Sylius\Bundle\ResourceBundle\Controller\Configuration');
+        $definition = new Definition('Sylius\Component\Resource\Metadata\Metadata');
         $definition
             ->setFactory(array(
-                new Reference('sylius.controller.configuration_factory'),
-                'createConfiguration'
+                new Reference('sylius.resource_registry'),
+                'get'
             ))
-            ->setArguments(array($this->applicationName, $resourceName, ''))
-            ->setPublic(false)
-        ;
+            ->setArguments(array($this->applicationName. '.'.$resourceName));
 
         return $definition;
+    }
+
+    /**
+     * @param $container
+     */
+    protected function createRepositoriesServices(Container $container)
+    {
+        $classes = $container->getParameter('sylius.resources');
+
+        foreach ($classes as $key => $class) {
+            if (!isset($class['classes']['repository']) ) {
+                continue;
+            }
+
+            $resourceName = str_replace($this->applicationName,'', $key);
+            $definition = new Definition($class['classes']['repository'], array(
+                new Reference('doctrine'),
+                new Reference('doctrine.orm.default_metadata_cache')
+            ));
+
+            $container->setDefinition(
+                sprintf('%s.repository.group',$this->applicationName,$resourceName),
+                $definition
+            );
+        }
     }
 }

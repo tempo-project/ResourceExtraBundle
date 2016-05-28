@@ -1,7 +1,7 @@
 {
   "name": "tempo/resource-extra-bundle",
   "description": "Extends SyliusResource.",
-  "keywords": [ "configuration"],
+  "keywords": ["configuration"],
   "type": "symfony-bundle",
   "license": "MIT",
   "authors": [
@@ -11,7 +11,7 @@
     }
   ],
   "require": {
-    "sylius/resource-bundle": "~0.16|~0.17"
+    "sylius/resource-bundle": "0.18.0"
   },
   "autoload": {
     "psr-4": { "Tempo\\Bundle\\ResourceExtraBundle\\": "" }
