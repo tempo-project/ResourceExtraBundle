@@ -11,19 +11,19 @@
 
 namespace Tempo\Bundle\ResourceExtraBundle;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Sylius\Bundle\ResourceBundle\AbstractResourceBundle;
 use Sylius\Bundle\ResourceBundle\SyliusResourceBundle;
 
 /**
  * @author Mbechezi Mlanawo <mlanawo.mbechezi@ikimea.com>
  */
 
-class TempoResourceExtraBundle extends Bundle
+class TempoResourceExtraBundle extends AbstractResourceBundle
 {
     /**
      * {@inheritDoc}
      */
-    public static function getSupportedDrivers()
+    public function getSupportedDrivers()
     {
         return array(
             SyliusResourceBundle::DRIVER_DOCTRINE_ORM
