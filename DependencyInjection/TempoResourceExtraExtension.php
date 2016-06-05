@@ -108,7 +108,7 @@ class TempoResourceExtraExtension extends AbstractResourceExtension
             }
 
             $container->setDefinition(
-                sprintf('%s.admin.controller.%s',$this->applicationName,$resourceName),
+                sprintf('%s.admin.controller.%s', $this->applicationName, $resourceName),
                 $this->getControllerDefinition($conf['controller'], $resourceName)
             );
         }
