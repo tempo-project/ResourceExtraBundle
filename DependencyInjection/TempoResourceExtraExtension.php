@@ -34,11 +34,6 @@ class TempoResourceExtraExtension extends AbstractResourceExtension
     protected $applicationName = 'tempo';
 
     /**
-     * @var string
-     */
-    protected $configDirectory = '/../Resources/config';
-
-    /**
      * @var array
      */
     protected $configFiles = array();
@@ -113,7 +108,7 @@ class TempoResourceExtraExtension extends AbstractResourceExtension
             }
 
             $container->setDefinition(
-                sprintf('%s.admin.controller.%s',$this->applicationName,$resourceName),
+                sprintf('%s.admin.controller.%s', $this->applicationName, $resourceName),
                 $this->getControllerDefinition($conf['controller'], $resourceName)
             );
         }
@@ -132,8 +127,8 @@ class TempoResourceExtraExtension extends AbstractResourceExtension
                 $this->getConfigurationDefinition($resourceName),
                 new Reference('sylius.resource_controller.request_configuration_factory'),
                 new Reference('sylius.resource_controller.view_handler'),
-                new Reference(sprintf('tempo.repository.%s', $resourceName)),
-                new Reference(sprintf('tempo.factory.%s', $resourceName)),
+                new Reference(sprintf('%s.repository.%s', $this->applicationName, $resourceName)),
+                new Reference(sprintf('%s.factory.%s', $this->applicationName, $resourceName)),
                 new Reference('sylius.resource_controller.new_resource_factory'),
                 new Reference('doctrine.orm.default_entity_manager'),
                 new Reference('sylius.resource_controller.single_resource_provider'),
