@@ -54,7 +54,7 @@ class TempoResourceExtraExtension extends AbstractResourceExtension
 
         $this->createDomainManager($container);
         $this->createManagerServices($container,$config);
-        $this->createRepositoriesServices($container,$config);
+        $this->createRepositoriesServices($container);
         $this->createAdminServices($container,$config);
 
         return $config;
@@ -67,6 +67,7 @@ class TempoResourceExtraExtension extends AbstractResourceExtension
     {
         $container
             ->register(sprintf('%s.domain_manager', $this->applicationName), DomainManager::class)
+            ->addArgument($this->applicationName)
             ->addArgument(new Reference('doctrine.orm.entity_manager'))
             ->addArgument(new Reference('event_dispatcher'));
     }

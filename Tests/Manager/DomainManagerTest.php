@@ -21,6 +21,7 @@ class DomainManagerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->domainManager = new DomainManager(
+            'tempo', 
             $this->getMock('Doctrine\Common\Persistence\ObjectManager'),
             $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface'),
             array()

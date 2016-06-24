@@ -26,6 +26,11 @@ use Sylius\Component\Resource\Event\ResourceEvent;
 class DomainManager
 {
     /**
+     * @var string
+     */
+    private $prefix;
+
+    /**
      * @var EventDispatcherInterface
      */
     protected $eventDispatcher;
@@ -38,8 +43,9 @@ class DomainManager
     /**
      * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(ObjectManager $objectManager, EventDispatcherInterface $eventDispatcher)
+    public function __construct($prefix, ObjectManager $objectManager, EventDispatcherInterface $eventDispatcher)
     {
+        $this->prefix    = $prefix;
         $this->objectManager    = $objectManager;
         $this->eventDispatcher  = $eventDispatcher;
     }
@@ -47,13 +53,12 @@ class DomainManager
     /**
      * @param $resource
      * @param $name
-     * @param string $prefix
      * @return Event
      */
-    protected function dispatchEvent($resource, $name, $prefix = 'tempo')
+    protected function dispatchEvent($resource, $name)
     {
         return $this->eventDispatcher->dispatch(
-            $this->getEventName($resource, $name, $prefix),
+            $this->getEventName($resource, $name, $this->prefix),
             new ResourceEvent($resource)
         );
     }
