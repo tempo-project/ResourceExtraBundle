@@ -139,6 +139,7 @@ class TempoResourceExtraExtension extends AbstractResourceExtension
                 new Reference('sylius.resource_controller.flash_helper'),
                 new Reference('sylius.resource_controller.authorization_checker.disabled'),
                 new Reference('sylius.resource_controller.event_dispatcher'),
+                new Reference('sylius.resource_controller.state_machine'),
             ))
             ->addMethodCall('setContainer', array(new Reference('service_container')));
 

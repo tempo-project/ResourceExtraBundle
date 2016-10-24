@@ -14,7 +14,7 @@ namespace Tempo\Bundle\ResourceExtraBundle\Manager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\Event;
 use Doctrine\Common\Persistence\ObjectManager;
-use Sylius\Component\Resource\Event\ResourceEvent;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * Domain Manager
@@ -59,7 +59,7 @@ class DomainManager
     {
         return $this->eventDispatcher->dispatch(
             $this->getEventName($resource, $name, $this->prefix),
-            new ResourceEvent($resource)
+            new GenericEvent($resource)
         );
     }
 
@@ -83,6 +83,7 @@ class DomainManager
 
     /**
      * @param $resource
+     * @param bool $flush
      * @return Event
      */
     public function create($resource, $flush = true)
@@ -103,6 +104,7 @@ class DomainManager
 
     /**
      * @param $resource
+     * @param bool $flush
      * @return Event
      */
     public function update($resource, $flush = true)
@@ -123,6 +125,7 @@ class DomainManager
 
     /**
      * @param $resource
+     * @param bool $flush
      * @return Event
      */
     public function delete($resource, $flush = true)

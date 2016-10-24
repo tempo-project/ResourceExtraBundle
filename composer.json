@@ -11,7 +11,8 @@
         }
     ],
     "require": {
-        "sylius/resource-bundle": "~0.18"
+        "sylius/resource-bundle": "1.0.0-alpha.1",
+        "sylius/resource": "1.0.0-alpha.1"
     },
     "autoload": {
         "psr-4": { "Tempo\\Bundle\\ResourceExtraBundle\\": "" }
