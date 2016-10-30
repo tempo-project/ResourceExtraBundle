@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="sylius.twig.extension.resource.class">Tempo\Bundle\ResourceExtraBundle\Twig\Extension\ResourceExtension</parameter>
+    </parameters>
+
+    <services>
+        <service id="sylius.twig.extension.resource" class="%sylius.twig.extension.resource.class%">
+            <argument type="service" id="router" />
+            <argument type="collection">
+                <argument type="string" key="paginate">SyliusResourceBundle:Twig:paginate.html.twig</argument>
+                <argument type="string" key="sorting">SyliusResourceBundle:Twig:sorting.html.twig</argument>
+            </argument>
+            <tag name="twig.extension" />
+            <tag name="kernel.event_listener" event="kernel.request" method="fetchRequest" />
+        </service>
+    </services>
+</container>

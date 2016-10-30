@@ -46,6 +46,7 @@ class TempoResourceExtraExtension extends AbstractResourceExtension
         $config = $this->processConfiguration(new Configuration(), $config);
 
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader->load('services.xml');
         $this->registerResources($this->applicationName, $config['driver'], array(), $container);
 
         if (isset($config['app_name'])) {
